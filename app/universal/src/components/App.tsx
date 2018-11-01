@@ -1,7 +1,7 @@
 import React from 'React';
 
 const click = () => {
-  console.log('onClick!');
+  window.location.href = 'a'
 };
 
 export default function App() {
