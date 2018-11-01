@@ -4,7 +4,7 @@ export interface History {
   push(path: string): void;
 }
 
-export const defaultHistory = {
+const defaultHistory = {
   push: () => {
     /*noop*/
   },
