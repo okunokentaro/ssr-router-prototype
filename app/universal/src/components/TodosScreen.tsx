@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { History, HistoryContext } from '../lib/history/history';
 
-export function ScreenA() {
+export function TodosScreen() {
   const history_ = (React as any).useContext(HistoryContext) as History;
 
   const onClickHome = () => {
@@ -10,7 +10,7 @@ export function ScreenA() {
 
   return (
     <>
-      <h1>A</h1>
+      <h1>Todos</h1>
       <div>
         <button onClick={onClickHome}>home</button>
       </div>

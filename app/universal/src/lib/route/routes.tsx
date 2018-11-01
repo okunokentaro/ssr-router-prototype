@@ -1,20 +1,20 @@
 import * as React from 'react';
 
-import { Home } from '../../components/Home';
-import { ScreenB } from '../../components/ScreenB';
-import { ScreenA } from '../../components/ScreenA'
+import { HomeScreen } from '../../components/HomeScreen';
+import { SettingsScreen } from '../../components/SettingsScreen';
+import { TodosScreen } from '../../components/TodosScreen'
 
 export const routes = [
   {
     path: '',
-    action: () => <Home />,
+    action: () => <HomeScreen />,
   },
   {
-    path: '/a',
-    action: () => <ScreenA />,
+    path: '/todos',
+    action: () => <TodosScreen />,
   },
   {
-    path: '/b',
-    action: () => <ScreenB />,
+    path: '/settings',
+    action: () => <SettingsScreen />,
   },
 ];

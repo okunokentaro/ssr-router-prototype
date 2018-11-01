@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { History, HistoryContext } from '../lib/history/history';
 
-export function ScreenB() {
+export function SettingsScreen() {
   const history_ = (React as any).useContext(HistoryContext) as History;
 
   const onClickHome = () => {
@@ -10,7 +10,7 @@ export function ScreenB() {
 
   return (
     <>
-      <h1>B</h1>
+      <h1>Settings</h1>
       <div>
         <button onClick={onClickHome}>home</button>
       </div>
