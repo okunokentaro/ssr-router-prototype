@@ -1,19 +1,24 @@
-import * as React from 'react'
-import * as ReactDOM from 'react-dom'
-import UniversalRouter from 'universal-router'
-import { createBrowserHistory } from 'history'
-import { routes } from '../../universal/src/routes'
-import { RouterContext } from '../../universal/src/components/Home'
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import UniversalRouter from 'universal-router';
+import { createBrowserHistory } from 'history';
+
+import { routes } from '../../universal/src/lib/route/routes';
+import { HistoryContext } from '../../universal/src/lib/history/history';
 
 const router = new UniversalRouter(routes);
 const history = createBrowserHistory();
 
-const cb = (renderer: JSX.Element) => {
-  ReactDOM.render(
-    <RouterContext.Provider value={history}>{renderer}</RouterContext.Provider>,
-    document.getElementById('app'),
-  );
+const main = () => {
+  const whenRouterResolved = (el: JSX.Element) => {
+    ReactDOM.render(
+      <HistoryContext.Provider value={history}>{el}</HistoryContext.Provider>,
+      document.getElementById('app'),
+    );
+  };
+
+  history.listen(path => router.resolve(path).then(whenRouterResolved));
+  router.resolve(location.pathname).then(whenRouterResolved);
 };
 
-history.listen(path => router.resolve(path).then(cb));
-router.resolve(location.pathname).then(cb);
+main();
