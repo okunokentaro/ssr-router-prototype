@@ -10,4 +10,4 @@ logs/
 .nyc_output
 
 dist/
-app/public/
+public/
