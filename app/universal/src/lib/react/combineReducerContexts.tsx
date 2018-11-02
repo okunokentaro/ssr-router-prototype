@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { Action } from './Action';
 import { Dispatch } from './Dispatch';
 import useContext from './useContext';
 import useReducer, { UseReducerReturnType } from './useReducer';
@@ -9,13 +10,8 @@ export interface ReducerContextValue<T> {
   dispatch: Dispatch;
 }
 
-interface Action<T> {
-  type: string;
-  payload: T;
-}
-
-export type Reducer<T, A = any> = (state: T, action: Action<A>) => T;
-type ReducerContext<T> = [React.Context<ReducerContextValue<T>>, Reducer<T>];
+export type Reducer<T, A extends Action = Action> = (state: T, action: A) => T;
+type ReducerContext<T> = [React.Context<ReducerContextValue<T>>, Reducer<T, any>];
 type ReducerContextMap<T> = { [K in keyof T]: ReducerContext<T[K]> };
 
 export function combineReducerContexts<T>(contextsMap: ReducerContextMap<T>) {

@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { add, AddAction } from '../../domains/todo/actions';
 import TodosContext from '../../domains/todo/TodoContext';
 import HistoryContext from '../../lib/history/HistoryContext';
 import useContext from '../../lib/react/useContext';
@@ -11,8 +12,9 @@ const useMediator = () => {
   return {
     todos: state.todos,
     todoCount: state.todos.length,
-    add(v: string) {
-      dispatch({ type: 'add', payload: { text: v } });
+
+    addTodo(title: string) {
+      dispatch({ type: add, payload: { title } } as AddAction);
     },
   };
 };
@@ -20,15 +22,15 @@ const useMediator = () => {
 export default function TodosScreen() {
   const mediator = useMediator();
   const history_ = useContext(HistoryContext);
-  const [input, setInput] = useState('');
+  const [newTodoInput, setNewTodoInput] = useState('');
 
-  const onChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(ev.currentTarget.value);
+  const onChangeTodoInput = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    setNewTodoInput(ev.currentTarget.value);
   };
 
-  const onClickAdd = () => {
-    mediator.add(input);
-    setInput('');
+  const onClickAddTodo = () => {
+    mediator.addTodo(newTodoInput);
+    setNewTodoInput('');
   };
 
   const onClickHome = () => {
@@ -41,8 +43,8 @@ export default function TodosScreen() {
 
       <h2>タスク追加</h2>
       <div>
-        <input onChange={onChange} value={input} type="text" />
-        <button onClick={onClickAdd}>追加</button>
+        <input onChange={onChangeTodoInput} value={newTodoInput} type="text" />
+        <button onClick={onClickAddTodo}>追加</button>
       </div>
 
       <h2>タスク一覧 ({mediator.todoCount})</h2>
@@ -60,12 +62,12 @@ export default function TodosScreen() {
         </thead>
 
         <tbody>
-          {mediator.todos.map((todo, i) => {
+          {mediator.todos.map(todo => {
             return (
-              <tr key={i}>
-                <td>ID</td>
+              <tr key={todo.id}>
+                <td>{todo.id}</td>
                 <td>済</td>
-                <td>{todo}</td>
+                <td>{todo.title}</td>
                 <td>作成</td>
                 <td>修正</td>
                 <td>編集</td>
