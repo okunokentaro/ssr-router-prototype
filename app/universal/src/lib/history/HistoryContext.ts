@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { noop } from '../function/noop';
 
-export interface History {
+interface History {
   push(path: string): void;
 }
 
