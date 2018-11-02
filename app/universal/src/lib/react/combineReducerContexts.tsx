@@ -1,6 +1,10 @@
 import * as React from 'react';
 
-export interface ContextValue<T> {
+import { Dispatch } from './Dispatch';
+import useContext from './useContext';
+import useReducer, { UseReducerReturnType } from './useReducer';
+
+export interface ReducerContextValue<T> {
   state: T;
   dispatch: Dispatch;
 }
@@ -11,19 +15,8 @@ interface Action<T> {
 }
 
 export type Reducer<T, A = any> = (state: T, action: Action<A>) => T;
-type Dispatch = (...args: any[]) => void;
-type UseContextSignature = <T>(context: React.Context<ContextValue<T>>) => ContextValue<T>;
-type ReducerContext<T> = [React.Context<ContextValue<T>>, Reducer<T, any>];
-type UseReducerReturnType<T> = [T, Dispatch];
-type UseReducerSignature = <T>(reducer: Reducer<T>, initialState: T) => UseReducerReturnType<T>;
+type ReducerContext<T> = [React.Context<ReducerContextValue<T>>, Reducer<T>];
 type ReducerContextMap<T> = { [K in keyof T]: ReducerContext<T[K]> };
-
-const useContext = (React as any).useContext as UseContextSignature;
-const useReducer = (React as any).useReducer as UseReducerSignature;
-
-export const noop = (() => {
-  /* noop */
-}) as Dispatch;
 
 export function combineReducerContexts<T>(contextsMap: ReducerContextMap<T>) {
   return function AppProvider({ children }: { children: React.ReactNode }) {
@@ -35,7 +28,7 @@ export function combineReducerContexts<T>(contextsMap: ReducerContextMap<T>) {
         return acc;
       },
       {
-        contextValues: [] as Array<ContextValue<T>>,
+        contextValues: [] as Array<ReducerContextValue<T>>,
         stores: [] as Array<UseReducerReturnType<T>>,
       },
     );

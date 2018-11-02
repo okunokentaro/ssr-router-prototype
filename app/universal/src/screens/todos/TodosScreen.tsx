@@ -1,9 +1,12 @@
 import * as React from 'react';
-import { History, HistoryContext } from '../../lib/history/history';
-import { TodosContext } from '../../domains/todo/todo';
+
+import TodosContext from '../../domains/todo/TodoContext';
+import HistoryContext from '../../lib/history/HistoryContext';
+import useContext from '../../lib/react/useContext';
+import useState from '../../lib/react/useState';
 
 const useMediator = () => {
-  const { state, dispatch } = (React as any).useContext(TodosContext);
+  const { state, dispatch } = useContext(TodosContext);
 
   return {
     todos: state.todos,
@@ -14,18 +17,16 @@ const useMediator = () => {
   };
 };
 
-export function TodosScreen() {
+export default function TodosScreen() {
   const mediator = useMediator();
-  const history_ = (React as any).useContext(HistoryContext) as History;
-  const [input, setInput] = (React as any).useState('') as [string, (v: string) => void];
+  const history_ = useContext(HistoryContext);
+  const [input, setInput] = useState('');
 
   const onChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('onChange');
     setInput(ev.currentTarget.value);
   };
 
   const onClickAdd = () => {
-    console.log('onClickAdd', input);
     mediator.add(input);
     setInput('');
   };
@@ -44,7 +45,7 @@ export function TodosScreen() {
         <button onClick={onClickAdd}>追加</button>
       </div>
 
-      <h2>タスク一覧 {mediator.todoCount}</h2>
+      <h2>タスク一覧 ({mediator.todoCount})</h2>
       <table>
         <thead>
           <tr>
@@ -59,8 +60,7 @@ export function TodosScreen() {
         </thead>
 
         <tbody>
-          {mediator.todos.map((todo: string, i: number) => {
-            console.log('map');
+          {mediator.todos.map((todo, i) => {
             return (
               <tr key={i}>
                 <td>ID</td>

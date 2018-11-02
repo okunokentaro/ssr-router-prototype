@@ -1,8 +1,10 @@
 import * as React from 'react';
-import { History, HistoryContext } from '../../lib/history/history';
 
-export function SettingsScreen() {
-  const history_ = (React as any).useContext(HistoryContext) as History;
+import HistoryContext from '../../lib/history/HistoryContext';
+import useContext from '../../lib/react/useContext';
+
+export default function SettingsScreen() {
+  const history_ = useContext(HistoryContext);
 
   const onClickHome = () => {
     history_.push('/');
