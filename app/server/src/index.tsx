@@ -13,9 +13,15 @@ const main = async () => {
   app.use(express.static('./public'));
 
   app.get('*', (req, res) => {
-    router.resolve(req.path).then(element => {
-      ReactDOMServer.renderToNodeStream(<Html>{element}</Html>).pipe(res);
-    });
+    router
+      .resolve(req.path)
+      .then(element => {
+        ReactDOMServer.renderToNodeStream(<Html>{element}</Html>).pipe(res);
+      })
+      .catch(err => {
+        console.error(err);
+        res.sendStatus(404);
+      });
   });
 
   app.listen(3000);
