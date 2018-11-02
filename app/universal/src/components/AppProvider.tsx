@@ -82,9 +82,7 @@ function combineReducerContexts<T>(contextsMap: ReducerContextMap<T>) {
     );
 
     const dispatch = (v => {
-      hooks.stores.forEach(([, dispatch]) => {
-        dispatch(v);
-      });
+      hooks.stores.forEach(([, dispatch_]) => dispatch_(v));
     }) as Dispatch;
 
     return contexts.reduce((wrappedEl, v, i) => {
