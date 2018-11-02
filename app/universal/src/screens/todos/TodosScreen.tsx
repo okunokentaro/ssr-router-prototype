@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { History, HistoryContext } from '../lib/history/history';
-import { TodosContext } from './AppProvider';
+import { History, HistoryContext } from '../../lib/history/history';
+import { TodosContext } from '../../domains/todo/todo';
 
 const useMediator = () => {
   const { state, dispatch } = (React as any).useContext(TodosContext);

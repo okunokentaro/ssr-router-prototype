@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { History, HistoryContext } from '../lib/history/history';
+import { History, HistoryContext } from '../../lib/history/history';
 
 export function HomeScreen() {
   const history_ = (React as any).useContext(HistoryContext) as History;
