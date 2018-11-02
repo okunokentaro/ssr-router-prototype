@@ -2,7 +2,7 @@ import * as React from 'react';
 
 type Dispatch = (...args: any[]) => void;
 
-interface ConsumedContext<T> {
+interface ContextValue<T> {
   state: T;
   dispatch: Dispatch;
 }
@@ -12,12 +12,14 @@ interface Action<T> {
   payload: T;
 }
 
-type UseContextSignature = <T>(context: React.Context<ConsumedContext<T>>) => ConsumedContext<T>;
+type UseContextSignature = <T>(context: React.Context<ContextValue<T>>) => ContextValue<T>;
 
-type Reducer<T> = (state: T, action: Action<any>) => T;
-type ReducerContext<T> = [React.Context<ConsumedContext<T>>, Reducer<T>];
+type Reducer<T, A = any> = (state: T, action: Action<A>) => T;
+type ReducerContext<T> = [React.Context<ContextValue<T>>, Reducer<T, any>];
 type UseReducerReturnType<T> = [T, Dispatch];
 type UseReducerSignature = <T>(reducer: Reducer<T>, initialState: T) => UseReducerReturnType<T>;
+
+type ReducerContextMap<T> = { [K in keyof T]: ReducerContext<T[K]> };
 
 interface TodosState {
   todos: string[];
@@ -37,7 +39,11 @@ const noop = (() => {
   /* noop */
 }) as Dispatch;
 
-export const TodosContext = React.createContext({ state: initialTodosState, dispatch: noop });
+export const TodosContext = React.createContext({
+  state: initialTodosState,
+  dispatch: noop,
+} as ContextValue<TodosState>);
+
 export const SettingsContext = React.createContext({ state: initialSettingsState, dispatch: noop });
 
 const todosReducer = ((state, action) => {
@@ -60,16 +66,17 @@ const settingsReducer = ((state, action) => {
   }
 }) as Reducer<SettingsState>;
 
-function combineReducerContexts<U extends ReducerContext<T>[], T = any>(contexts: U) {
+function combineReducerContexts<T>(contextsMap: ReducerContextMap<T>) {
   return function AppProvider({ children }: { children: React.ReactNode }) {
+    const contexts = Object.values(contextsMap) as ReducerContext<T>[];
     const hooks = contexts.reduce(
       (acc, v, i) => {
-        acc.consumedContexts[i] = useContext(v[0]);
-        acc.stores[i] = useReducer(v[1], acc.consumedContexts[i].state);
+        acc.contextValues[i] = useContext(v[0]);
+        acc.stores[i] = useReducer(v[1], acc.contextValues[i].state);
         return acc;
       },
       {
-        consumedContexts: [] as Array<ConsumedContext<T>>,
+        contextValues: [] as Array<ContextValue<T>>,
         stores: [] as Array<UseReducerReturnType<T>>,
       },
     );
@@ -91,7 +98,7 @@ function combineReducerContexts<U extends ReducerContext<T>[], T = any>(contexts
   };
 }
 
-export const AppProvider = combineReducerContexts([
-  [TodosContext, todosReducer],
-  [SettingsContext, settingsReducer],
-]);
+export const AppProvider = combineReducerContexts({
+  todos: [TodosContext, todosReducer],
+  settings: [SettingsContext, settingsReducer],
+});
