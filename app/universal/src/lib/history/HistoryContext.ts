@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { noop } from '../function/noop';
+import noop from '../function/noop';
 
 interface History {
   push(path: string): void;

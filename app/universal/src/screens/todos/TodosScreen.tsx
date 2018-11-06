@@ -1,27 +1,14 @@
 import * as React from 'react';
 
-import { add, AddAction } from '../../domains/todo/actions';
-import TodosContext from '../../domains/todo/TodoContext';
-import HistoryContext from '../../lib/history/HistoryContext';
-import useContext from '../../lib/react/useContext';
 import useState from '../../lib/react/useState';
+import { TodosMediator } from './useMediator';
 
-const useMediator = () => {
-  const { state, dispatch } = useContext(TodosContext);
+interface Props {
+  useMediator: () => TodosMediator;
+}
 
-  return {
-    todos: state.todos,
-    todoCount: state.todos.length,
-
-    addTodo(title: string) {
-      dispatch({ type: add, payload: { title } } as AddAction);
-    },
-  };
-};
-
-export default function TodosScreen() {
+export default function TodosScreen({ useMediator }: Props) {
   const mediator = useMediator();
-  const history_ = useContext(HistoryContext);
   const [newTodoInput, setNewTodoInput] = useState('');
 
   const onChangeTodoInput = (ev: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,7 +21,11 @@ export default function TodosScreen() {
   };
 
   const onClickHome = () => {
-    history_.push('/');
+    mediator.toHome();
+  };
+
+  const onClickTodos1 = () => {
+    mediator.toTodos1();
   };
 
   return (
@@ -80,6 +71,7 @@ export default function TodosScreen() {
 
       <button>さらに読み込む</button>
       <button onClick={onClickHome}>Home</button>
+      <button onClick={onClickTodos1}>todos/1</button>
     </>
   );
 }

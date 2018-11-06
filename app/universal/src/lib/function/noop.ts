@@ -1,3 +1,3 @@
-export const noop = () => {
+export default function noop() {
   /* noop */
-};
+}

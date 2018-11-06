@@ -1,13 +1,19 @@
 import { Reducer } from '../../lib/react/combineReducerContexts';
-import { add, AddAction, remove, RemoveAction, TodoAction } from './actions';
+import { add, AddAction, init, InitAction, remove, RemoveAction, TodoAction } from './actions';
 import { Todo } from './Todo';
 
 export interface TodosState {
+  isInitialized: boolean;
   todos: Todo[];
   nextSequentialNumber: number;
 }
 
-export const initialState = { todos: [], nextSequentialNumber: 1 } as TodosState;
+export const initialState = { isInitialized: false, todos: [], nextSequentialNumber: 1 } as TodosState;
+
+const initReducer = (state: TodosState, action: InitAction): TodosState => {
+  console.log('initReducer');
+  return { ...state, isInitialized: true, todos: action.payload as any };
+};
 
 const addReducer = (state: TodosState, action: AddAction): TodosState => {
   const todos = state.todos.concat([
@@ -20,10 +26,7 @@ const addReducer = (state: TodosState, action: AddAction): TodosState => {
     } as Todo,
   ]);
 
-  return Object.assign({}, state, {
-    todos,
-    nextSequentialNumber: state.nextSequentialNumber + 1,
-  });
+  return { ...state, todos, nextSequentialNumber: state.nextSequentialNumber + 1 };
 };
 
 const removeReducer = (state: TodosState, action: RemoveAction): TodosState => {
@@ -36,11 +39,13 @@ const removeReducer = (state: TodosState, action: RemoveAction): TodosState => {
   target.status = 'removed';
 
   const todos = state.todos.filter(v => v.id !== targetId).concat([target]);
-  return Object.assign({}, state, { todos });
+  return { ...state, todos };
 };
 
 const todoReducer = ((state, action) => {
   switch (action.type) {
+    case init:
+      return initReducer(state, action);
     case add:
       return addReducer(state, action);
     case remove:
